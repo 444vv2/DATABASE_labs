@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str = Field("password", env="DB_PASSWORD")
     DB_HOST: str = Field("127.0.0.1", env="DB_HOST")
     DB_PORT: int = Field(3306, env="DB_PORT")
-    DB_NAME: str = Field("mydb", env="DB_NAME")
+    DB_NAME: str = Field("tickets_ua1", env="DB_NAME")
 
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:

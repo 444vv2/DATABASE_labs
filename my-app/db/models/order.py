@@ -47,4 +47,4 @@ class Order(Base):
     tickets = relationship("Ticket", back_populates="order")
     delivery = relationship("Delivery", back_populates="order")
     insurance = relationship("Insurance", back_populates="order")
-    payment = relationship("Payment", back_populates="order")
+    payment = relationship("Payment", back_populates="order", uselist=False)

@@ -123,7 +123,8 @@ class UserService:
             if not user:
                 return False
 
-            if user.password:
+            password_record = await self.password_dao.get_by_id(UserPassword, user_id)
+            if password_record:
                 await self.password_dao.delete_by_id(UserPassword, user_id)
 
             result = await self.general_dao.delete_by_id(User, user_id)
@@ -137,12 +138,10 @@ class UserService:
         """
         Аутентифікація користувача
         """
-        # 1. Знаходимо користувача
         user = await self.user_dao.get_by_email(email)
         if not user:
             return None
 
-        # 2. Отримуємо хеш пароля з БД
         query = await self.session.execute(
             select(UserPassword).where(UserPassword.user_id == user.user_id)
         )
@@ -151,7 +150,6 @@ class UserService:
         if not user_password:
             return None
 
-        # 3. Перевіряємо пароль
         input_hash = self._hash_password(password)
         if input_hash != user_password.password_hash:
             return None

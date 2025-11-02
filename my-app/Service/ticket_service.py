@@ -18,15 +18,20 @@ class TicketService:
         """
         Створення квитка
         """
+        bus_id = None if ticket_data.bus_id == 0 else ticket_data.bus_id
+        plane_id = None if ticket_data.plane_id == 0 else ticket_data.plane_id
+        train_id = None if ticket_data.train_id == 0 else ticket_data.train_id
+        event_id = None if ticket_data.event_id == 0 else ticket_data.event_id
+
         new_ticket = Ticket(
             ticket_type=ticket_data.ticket_type,
             seat_number=ticket_data.seat_number,
             price=ticket_data.price,
             is_available=ticket_data.is_available,
-            bus_id=ticket_data.bus_id,
-            plane_id=ticket_data.plane_id,
-            train_id=ticket_data.train_id,
-            event_id=ticket_data.event_id,
+            bus_id=bus_id,
+            plane_id=plane_id,
+            train_id=train_id,
+            event_id=event_id,
             order_id=ticket_data.order_id
         )
         created_ticket = await self.general_dao.create(new_ticket)

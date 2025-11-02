@@ -1,9 +1,10 @@
 from typing import Optional
+from datetime import datetime
 from pydantic import BaseModel
 
 class DeliveryBase(BaseModel):
     delivery_type: str
-    delivery_time: Optional[str] = None
+    delivery_time: Optional[datetime] = None
     is_delivered: bool
 
 class DeliveryCreate(DeliveryBase):
@@ -11,7 +12,7 @@ class DeliveryCreate(DeliveryBase):
 
 class DeliveryUpdate(BaseModel):
     delivery_type: Optional[str] = None
-    delivery_time: Optional[str] = None
+    delivery_time: Optional[datetime] = None
     is_delivered: Optional[bool] = None
     order_id: Optional[int] = None
 

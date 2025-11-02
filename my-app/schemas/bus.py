@@ -1,10 +1,10 @@
 from typing import Optional
-from datetime import time
+from datetime import datetime
 from pydantic import BaseModel
 
 class BusBase(BaseModel):
-    departure_date: time
-    arrival_time: Optional[time] = None
+    departure_date: datetime
+    arrival_time: Optional[datetime] = None
     seat_amount: int
 
 class BusCreate(BusBase):
@@ -12,8 +12,8 @@ class BusCreate(BusBase):
     to_id: int
 
 class BusUpdate(BaseModel):
-    departure_date: Optional[time] = None
-    arrival_time: Optional[time] = None
+    departure_date: Optional[datetime] = None
+    arrival_time: Optional[datetime] = None
     from_id: Optional[int] = None
     to_id: Optional[int] = None
     seat_amount: Optional[int] = None

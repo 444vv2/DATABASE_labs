@@ -11,8 +11,9 @@ router = APIRouter(prefix="/insurances", tags=["insurances"])
 @router.post("/", response_model=InsuranceResponse, status_code=status.HTTP_201_CREATED)
 async def create_insurance(insurance_data: InsuranceCreate, db: AsyncSession = Depends(get_db)):
     """Створення нового страхування"""
+    insurance_service = InsuranceService(db)
     try:
-        insurance = await InsuranceService.create_insurance(db, insurance_data)
+        insurance = await insurance_service.create_insurance(insurance_data)
         return insurance
     except Exception as e:
         raise HTTPException(
@@ -23,7 +24,8 @@ async def create_insurance(insurance_data: InsuranceCreate, db: AsyncSession = D
 @router.get("/{insurance_id}", response_model=InsuranceResponse)
 async def get_insurance_by_id(insurance_id: int, db: AsyncSession = Depends(get_db)):
     """Отримання страхування за ID"""
-    insurance = await InsuranceService.get_insurance_by_id(db, insurance_id)
+    insurance_service = InsuranceService(db)
+    insurance = await insurance_service.get_insurance_by_id(insurance_id)
     if not insurance:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -34,14 +36,16 @@ async def get_insurance_by_id(insurance_id: int, db: AsyncSession = Depends(get_
 @router.get("/", response_model=List[InsuranceResponse])
 async def get_all_insurances(db: AsyncSession = Depends(get_db)):
     """Отримання всіх страхувань"""
-    insurances = await InsuranceService.get_all_insurances(db)
+    insurance_service = InsuranceService(db)
+    insurances = await insurance_service.get_all_insurances()
     return insurances
 
 @router.put("/{insurance_id}", response_model=InsuranceResponse)
 async def update_insurance(insurance_id: int, insurance_data: InsuranceUpdate, db: AsyncSession = Depends(get_db)):
     """Оновлення страхування"""
+    insurance_service = InsuranceService(db)
     try:
-        insurance = await InsuranceService.update_insurance(db, insurance_id, insurance_data)
+        insurance = await insurance_service.update_insurance(insurance_id, insurance_data)
         if not insurance:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -57,8 +61,9 @@ async def update_insurance(insurance_id: int, insurance_data: InsuranceUpdate, d
 @router.delete("/{insurance_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_insurance(insurance_id: int, db: AsyncSession = Depends(get_db)):
     """Видалення страхування"""
+    insurance_service = InsuranceService(db)
     try:
-        deleted = await InsuranceService.delete_insurance_by_id(db, insurance_id)
+        deleted = await insurance_service.delete_insurance_by_id(insurance_id)
         if not deleted:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -66,6 +71,6 @@ async def delete_insurance(insurance_id: int, db: AsyncSession = Depends(get_db)
             )
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         ) from e

@@ -32,6 +32,11 @@ class PaymentService:
             return PaymentResponse.model_validate(payment)
         return None
 
+    async def get_all_payments(self) -> list[PaymentResponse]:
+        """Отримання всіх платежів"""
+        payments = await self.general_dao.get_all(Payment)
+        return [PaymentResponse.model_validate(payment) for payment in payments]
+
     async def get_payment_by_order(self, order_id: int) -> Optional[PaymentResponse]:
         """Отримання платежу за замовленням"""
         query = await self.session.execute(
@@ -53,6 +58,10 @@ class PaymentService:
 
         updated_payment = await self.general_dao.update(payment)
         return PaymentResponse.model_validate(updated_payment)
+
+    async def delete_payment_by_id(self, payment_id: int) -> bool:
+        """Видалення платежу за ID"""
+        return await self.general_dao.delete_by_id(Payment, payment_id)
 
     async def mark_as_paid(self, payment_id: int) -> Optional[PaymentResponse]:
         """Позначити платіж як оплачений"""

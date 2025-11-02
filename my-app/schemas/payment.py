@@ -22,6 +22,7 @@ class PaymentUpdate(BaseModel):
 
 class PaymentResponse(PaymentBase):
     payment_id: int
+    order_id: int
 
     class Config:
         from_attributes = True

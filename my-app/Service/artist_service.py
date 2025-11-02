@@ -52,6 +52,10 @@ class ArtistService:
         """Видалення артиста"""
         return await self.general_dao.delete_by_id(Artist, artist_id)
 
+    async def delete_artist_by_id(self, artist_id: int) -> bool:
+        """Видалення артиста за ID"""
+        return await self.general_dao.delete_by_id(Artist, artist_id)
+
     async def search_artists(self, search_term: str) -> List[ArtistResponse]:
         """Пошук артистів за ім'ям, прізвищем або псевдонімом"""
         query = await self.session.execute(

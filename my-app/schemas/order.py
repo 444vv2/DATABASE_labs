@@ -20,6 +20,7 @@ class OrderUpdate(BaseModel):
 
 class OrderResponse(OrderBase):
     order_id: int
+    user_id: int
 
     class Config:
         from_attributes = True

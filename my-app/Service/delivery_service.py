@@ -69,3 +69,13 @@ class DeliveryService:
         )
         deliveries = query.scalars().all()
         return [DeliveryResponse.model_validate(delivery) for delivery in deliveries]
+
+    async def get_all_deliveries(self) -> List[DeliveryResponse]:
+        """Отримання всіх доставок"""
+        deliveries = await self.general_dao.get_all(Delivery)
+        return [DeliveryResponse.model_validate(delivery) for delivery in deliveries]
+
+    async def delete_delivery(self, delivery_id: int) -> bool:
+        """Видалення доставки за ID"""
+        result = await self.general_dao.delete_by_id(Delivery, delivery_id)
+        return result
