@@ -24,7 +24,6 @@ class UserService:
     async def create_user_with_password(self, user_data: UserCreate) -> UserResponse:
         """
         Створення користувача з паролем
-        Бізнес-логіка: перевірка на дублікати, хешування пароля
         """
         try:
             existing_user = await self.user_dao.get_by_email(user_data.email)
@@ -43,7 +42,6 @@ class UserService:
             )
             created_user = await self.general_dao.create(new_user)
 
-            # 4. Створюємо запис пароля
             hashed_password = self._hash_password(user_data.password)
             user_password = UserPassword(
                 user_id=created_user.user_id,
@@ -82,21 +80,17 @@ class UserService:
     async def update_user(self, user_id: int, user_data: UserUpdate) -> Optional[UserResponse]:
         """
         Оновлення користувача  
-        Бізнес-логіка: перевірка унікальності email/phone при оновленні
         """
         try:
-            # 1. Знаходимо користувача
             user = await self.general_dao.get_by_id(User, user_id)
             if not user:
                 return None
 
-            # 2. Перевіряємо унікальність email (якщо змінюється)
             if user_data.email and user_data.email != user.email:
                 existing_email = await self.user_dao.get_by_email(user_data.email)
                 if existing_email:
                     raise ValueError(f"Email {user_data.email} already exists")
 
-            # 3. Перевіряємо унікальність phone (якщо змінюється)
             if user_data.phone and user_data.phone != user.phone:
                 existing_phone = await self.user_dao.get_by_phone(user_data.phone)
                 if existing_phone:
@@ -123,18 +117,15 @@ class UserService:
     async def delete_user(self, user_id: int) -> bool:
         """
         Видалення користувача
-        Бізнес-логіка: видаляємо User + UserPassword
         """
         try:
-            # 1. Перевіряємо чи користувач існує
             user = await self.general_dao.get_by_id(User, user_id)
             if not user:
                 return False
 
-            # 2. Видаляємо пароль (якщо є)
             if user.password:
                 await self.password_dao.delete_by_id(UserPassword, user_id)
-            # 3. Видаляємо користувача
+
             result = await self.general_dao.delete_by_id(User, user_id)
             return result
 
@@ -145,7 +136,6 @@ class UserService:
     async def authenticate_user(self, email: str, password: str) -> Optional[UserResponse]:
         """
         Аутентифікація користувача
-        Бізнес-логіка: перевірка пароля
         """
         # 1. Знаходимо користувача
         user = await self.user_dao.get_by_email(email)

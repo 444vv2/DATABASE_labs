@@ -7,5 +7,6 @@ class OrderDAO:
         self.session = session
 
     async def get_orders_by_user(self, user_id: int) -> list[Order]:
+        """Отримання замовлень за ID користувача"""
         query = await self.session.execute(select(Order).where(Order.user_id == user_id))
         return query.scalars().all()

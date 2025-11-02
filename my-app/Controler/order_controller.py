@@ -10,6 +10,7 @@ router = APIRouter(prefix="/orders", tags=["orders"])
 
 @router.post("/", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
 async def create_order(order_data: OrderCreate, db: AsyncSession = Depends(get_db)):
+    """Створення нового замовлення"""
     try:
         order = await OrderService.create_order(db, order_data)
         return order
@@ -21,6 +22,7 @@ async def create_order(order_data: OrderCreate, db: AsyncSession = Depends(get_d
 
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order_by_id(order_id: int, db: AsyncSession = Depends(get_db)):
+    """Отримання замовлення за ID"""
     order = await OrderService.get_order_by_id(db, order_id)
     if not order:
         raise HTTPException(
@@ -31,11 +33,13 @@ async def get_order_by_id(order_id: int, db: AsyncSession = Depends(get_db)):
 
 @router.get("/", response_model=List[OrderResponse])
 async def get_all_orders(db: AsyncSession = Depends(get_db)):
+    """Отримання всіх замовлень"""
     orders = await OrderService.get_all_orders(db)
     return orders
 
 @router.put("/{order_id}", response_model=OrderResponse)
 async def update_order(order_id: int, order_data: OrderUpdate, db: AsyncSession = Depends(get_db)):
+    """Оновлення замовлення"""
     try:
         order = await OrderService.update_order(db, order_id, order_data)
         if not order:
@@ -52,6 +56,7 @@ async def update_order(order_id: int, order_data: OrderUpdate, db: AsyncSession 
 
 @router.delete("/{order_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_order(order_id: int, db: AsyncSession = Depends(get_db)):
+    """Видалення замовлення"""
     try:
         deleted = await OrderService.delete_order_by_id(db, order_id)
         if not deleted:

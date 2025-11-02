@@ -10,6 +10,7 @@ router = APIRouter(prefix="/payments", tags=["payments"])
 
 @router.post("/", response_model=PaymentResponse, status_code=status.HTTP_201_CREATED)
 async def create_payment(payment_data: PaymentCreate, db: AsyncSession = Depends(get_db)):
+    """Створення нового платежу"""
     try:
         payment = await PaymentService.create_payment(db, payment_data)
         return payment
@@ -21,6 +22,7 @@ async def create_payment(payment_data: PaymentCreate, db: AsyncSession = Depends
 
 @router.get("/{payment_id}", response_model=PaymentResponse)
 async def get_payment_by_id(payment_id: int, db: AsyncSession = Depends(get_db)):
+    """Отримання платежу за ID"""
     payment = await PaymentService.get_payment_by_id(db, payment_id)
     if not payment:
         raise HTTPException(
@@ -31,11 +33,13 @@ async def get_payment_by_id(payment_id: int, db: AsyncSession = Depends(get_db))
 
 @router.get("/", response_model=List[PaymentResponse])
 async def get_all_payments(db: AsyncSession = Depends(get_db)):
+    """Отримання всіх платежів"""
     payments = await PaymentService.get_all_payments(db)
     return payments
 
 @router.put("/{payment_id}", response_model=PaymentResponse)
 async def update_payment(payment_id: int, payment_data: PaymentUpdate, db: AsyncSession = Depends(get_db)):
+    """Оновлення платежу"""
     try:
         payment = await PaymentService.update_payment(db, payment_id, payment_data)
         if not payment:
@@ -52,6 +56,7 @@ async def update_payment(payment_id: int, payment_data: PaymentUpdate, db: Async
 
 @router.delete("/{payment_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_payment(payment_id: int, db: AsyncSession = Depends(get_db)):
+    """Видалення платежу"""
     try:
         deleted = await PaymentService.delete_payment_by_id(db, payment_id)
         if not deleted:

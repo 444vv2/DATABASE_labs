@@ -17,6 +17,7 @@ class TransportService:
         self.general_dao_plane = GeneralDAO[Plane](session)
 
     async def create_bus(self, bus_data: BusCreate) -> BusResponse:
+        """Створення автобуса"""
         new_bus = Bus(
             departure_time=bus_data.departure_time,
             arrival_time=bus_data.arrival_time,
@@ -28,6 +29,7 @@ class TransportService:
         return BusResponse.model_validate(created_bus)
 
     async def create_train(self, train_data: TrainCreate) -> TrainResponse:
+        """Створення поїзда"""
         new_train = Train(
             train_class=train_data.train_class,
             departure_time=train_data.departure_time,
@@ -40,6 +42,7 @@ class TransportService:
         return TrainResponse.model_validate(created_train)
 
     async def create_plane(self, plane_data: PlaneCreate) -> PlaneResponse:
+        """Створення літака"""
         new_plane = Plane(
                 plane_class=plane_data.plane_class,
                 departure_time=plane_data.departure_time,
@@ -52,24 +55,28 @@ class TransportService:
         return PlaneResponse.model_validate(created_plane)
 
     async def get_bus_by_id(self, bus_id: int) -> Optional[BusResponse]:
+        """Отримання автобуса за ID"""
         bus = await self.general_dao.get_by_id(Bus, bus_id)
         if bus:
             return BusResponse.model_validate(bus)
         return None
 
     async def get_train_by_id(self, train_id: int) -> Optional[TrainResponse]:
+        """Отримання поїзда за ID"""
         train = await self.general_dao.get_by_id(Train, train_id)
         if train:
             return TrainResponse.model_validate(train)
         return None
 
     async def get_plane_by_id(self, plane_id: int) -> Optional[PlaneResponse]:
+        """Отримання літака за ID"""
         plane = await self.general_dao.get_by_id(Plane, plane_id)
         if plane:
             return PlaneResponse.model_validate(plane)
         return None
 
     async def update_bus(self, bus_id: int, bus_data: BusUpdate) -> Optional[BusResponse]:
+        """Оновлення автобуса"""
         bus = await self.general_dao.get_by_id(Bus, bus_id)
         if not bus:
             return None
@@ -81,6 +88,7 @@ class TransportService:
         return BusResponse.model_validate(updated_bus)
 
     async def update_train(self, train_id: int, train_data: TrainUpdate) -> Optional[TrainResponse]:
+        """Оновлення поїзда"""
         train = await self.general_dao.get_by_id(Train, train_id)
         if not train:
             return None
@@ -92,6 +100,7 @@ class TransportService:
         return TrainResponse.model_validate(updated_train)
 
     async def update_plane(self, plane_id: int, plane_data: PlaneUpdate) -> Optional[PlaneResponse]:
+        """Оновлення літака"""
         plane = await self.general_dao.get_by_id(Plane, plane_id)
         if not plane:
             return None
@@ -103,30 +112,37 @@ class TransportService:
         return PlaneResponse.model_validate(updated_plane)
 
     async def delete_bus(self, bus_id: int) -> bool:
+        """Видалення автобуса"""
         result = await self.general_dao.delete_by_id(Bus, bus_id)
         return result
 
     async def delete_train(self, train_id: int) -> bool:
+        """Видалення поїзда"""
         result = await self.general_dao.delete_by_id(Train, train_id)
         return result
 
     async def delete_plane(self, plane_id: int) -> bool:
+        """Видалення літака"""
         result = await self.general_dao.delete_by_id(Plane, plane_id)
         return result
 
     async def get_all_buses(self) -> List[BusResponse]:
+        """Отримання всіх автобусів"""
         buses = await self.general_dao.get_all(Bus)
         return [BusResponse.model_validate(bus) for bus in buses]
 
     async def get_all_trains(self) -> List[TrainResponse]:
+        """Отримання всіх поїздів"""
         trains = await self.general_dao.get_all(Train)
         return [TrainResponse.model_validate(train) for train in trains]
 
     async def get_all_planes(self) -> List[PlaneResponse]:
+        """Отримання всіх літаків"""
         planes = await self.general_dao.get_all(Plane)
         return [PlaneResponse.model_validate(plane) for plane in planes]
 
     async def get_buses_by_route(self, from_id: int, to_id: int) -> List[BusResponse]:
+        """Отримання автобусів за маршрутом"""
         query = await self.session.execute(
             select(Bus).where(and_(Bus.from_id == from_id, Bus.to_id == to_id))
         )
@@ -134,6 +150,7 @@ class TransportService:
         return [BusResponse.model_validate(bus) for bus in buses]
 
     async def get_trains_by_route(self, from_id: int, to_id: int) -> List[TrainResponse]:
+        """Отримання поїздів за маршрутом"""
         query = await self.session.execute(
             select(Train).where(and_(Train.from_id == from_id, Train.to_id == to_id))
         )
@@ -141,6 +158,7 @@ class TransportService:
         return [TrainResponse.model_validate(train) for train in trains]
 
     async def get_planes_by_route(self, from_id: int, to_id: int) -> List[PlaneResponse]:
+        """Отримання літаків за маршрутом"""
         query = await self.session.execute(
             select(Plane).where(and_(Plane.from_id == from_id, Plane.to_id == to_id))
         )

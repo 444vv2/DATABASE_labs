@@ -10,14 +10,17 @@ class UserDAO:
         self.session = session
 
     async def get_by_email(self, email: str) -> Optional[User]:
+        """Отримання користувача за електронною поштою"""
         query = await self.session.execute(select(User).where(User.email == email))
         return query.scalar_one_or_none()
 
     async def get_by_phone(self, phone: str) -> Optional[User]:
+        """Отримання користувача за номером телефону"""
         query = await self.session.execute(select(User).where(User.phone == phone))
         return query.scalar_one_or_none()
 
     async def get_user_with_orders(self, user_id: int) -> Optional[User]:
+        """Отримання користувача з інформацією про замовлення"""
         query = await self.session.execute(
             select(User).where(User.user_id == user_id).options(selectinload(User.orders))
         )
