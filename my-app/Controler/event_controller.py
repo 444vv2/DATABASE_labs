@@ -3,8 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.base import get_db
-from Service import EventService
-from schemas.event import EventCreate, EventUpdate, EventResponse
+from Service import EventService, TicketService
+from schemas.event import EventCreate, EventUpdate, EventResponse, EventWithArtistsResponse
+from schemas.ticket import TicketResponse
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -66,3 +67,21 @@ async def delete_event(event_id: int, db: AsyncSession = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Event with id {event_id} not found"
         )
+
+@router.get("/event/{event_id}", response_model=List[TicketResponse])
+async def get_tickets_by_event(event_id: int, db: AsyncSession = Depends(get_db)):
+    """Отримати квитки за ID події"""
+    ticket_service = TicketService(db)
+    tickets = await ticket_service.get_ticket_by_event(event_id)
+    if not tickets:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No tickets found for event with id {event_id}"
+        )
+    return tickets
+
+@router.get("/with-artists/", response_model=List[EventWithArtistsResponse])
+async def get_all_events_with_artists(db: AsyncSession = Depends(get_db)):
+    """Отримати всі події з артистами (багато до багато)"""
+    event_service = EventService(db)
+    return await event_service.get_all_events_with_artists()

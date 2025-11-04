@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel
 
@@ -19,6 +19,25 @@ class EventUpdate(BaseModel):
 class EventResponse(EventBase):
     event_id: int
     location_id: int
+
+    class Config:
+        from_attributes = True
+
+class ArtistInEvent(BaseModel):
+    artist_id: int
+    name: str
+    surname: str
+    nickname: Optional[str] = None
+    genre: Optional[str] = None
+    is_group: Optional[bool] = False
+
+    class Config:
+        from_attributes = True
+
+class EventWithArtistsResponse(EventBase):
+    event_id: int
+    location_id: int
+    artists: List[ArtistInEvent] = []
 
     class Config:
         from_attributes = True

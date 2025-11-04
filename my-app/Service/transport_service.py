@@ -1,6 +1,5 @@
 from typing import Optional, List
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
 
 from DAO.general_dao import GeneralDAO
 from db.models import Bus, Train, Plane
@@ -139,28 +138,4 @@ class TransportService:
     async def get_all_planes(self) -> List[PlaneResponse]:
         """Отримання всіх літаків"""
         planes = await self.general_dao_plane.get_all(Plane)
-        return [PlaneResponse.model_validate(plane) for plane in planes]
-
-    async def get_buses_by_route(self, from_id: int, to_id: int) -> List[BusResponse]:
-        """Отримання автобусів за маршрутом"""
-        query = await self.session.execute(
-            select(Bus).where(and_(Bus.from_id == from_id, Bus.to_id == to_id))
-        )
-        buses = query.scalars().all()
-        return [BusResponse.model_validate(bus) for bus in buses]
-
-    async def get_trains_by_route(self, from_id: int, to_id: int) -> List[TrainResponse]:
-        """Отримання поїздів за маршрутом"""
-        query = await self.session.execute(
-            select(Train).where(and_(Train.from_id == from_id, Train.to_id == to_id))
-        )
-        trains = query.scalars().all()
-        return [TrainResponse.model_validate(train) for train in trains]
-
-    async def get_planes_by_route(self, from_id: int, to_id: int) -> List[PlaneResponse]:
-        """Отримання літаків за маршрутом"""
-        query = await self.session.execute(
-            select(Plane).where(and_(Plane.from_id == from_id, Plane.to_id == to_id))
-        )
-        planes = query.scalars().all()
         return [PlaneResponse.model_validate(plane) for plane in planes]

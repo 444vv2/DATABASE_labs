@@ -78,28 +78,28 @@ class TicketService:
         """
         Отримання квитків за ID автобуса
         """
-        tickets = await self.ticket_dao.get_by_bus_id(bus_id)
-        return [TicketResponse.model_validate(ticket) for ticket in tickets]
+        ticket = await self.ticket_dao.get_ticket_by_bus(bus_id)
+        return [TicketResponse.model_validate(ticket)] if ticket else []
 
     async def get_ticket_by_train(self, train_id: int) -> List[TicketResponse]:
         """
         Отримання квитків за ID поїзда
         """
-        tickets = await self.ticket_dao.get_by_train_id(train_id)
-        return [TicketResponse.model_validate(ticket) for ticket in tickets]
+        ticket = await self.ticket_dao.get_ticket_by_train(train_id)
+        return [TicketResponse.model_validate(ticket)] if ticket else []
 
     async def get_ticket_by_plane(self, plane_id: int) -> List[TicketResponse]:
         """
         Отримання квитків за ID літака
         """
-        tickets = await self.ticket_dao.get_by_plane_id(plane_id)
-        return [TicketResponse.model_validate(ticket) for ticket in tickets]
+        ticket = await self.ticket_dao.get_ticket_by_plane(plane_id)
+        return [TicketResponse.model_validate(ticket)] if ticket else []
 
     async def get_ticket_by_event(self, event_id: int) -> List[TicketResponse]:
         """
         Отримання квитків за ID події
         """
-        tickets = await self.ticket_dao.get_by_event_id(event_id)
+        tickets = await self.ticket_dao.get_event_tickets(event_id)
         return [TicketResponse.model_validate(ticket) for ticket in tickets]
 
     async def get_available_tickets(self) -> List[TicketResponse]:
@@ -108,28 +108,6 @@ class TicketService:
         """
         tickets = await self.ticket_dao.get_available_tickets()
         return [TicketResponse.model_validate(ticket) for ticket in tickets]
-
-    async def book_ticket(self, ticket_id: int) -> Optional[TicketResponse]:
-        """
-        Бронювання квитка користувачем
-        Бізнес-логіка: перевірка доступності + зміна статусу
-        """
-        try:
-            ticket = await self.general_dao.get_by_id(Ticket, ticket_id)
-            if not ticket:
-                raise ValueError(f"Ticket with ID {ticket_id} not found")
-
-            if not ticket.is_available:
-                raise ValueError(f"Ticket {ticket_id} is not available for booking")
-
-            ticket.is_available = False
-            updated_ticket = await self.general_dao.update(ticket)
-
-            return TicketResponse.model_validate(updated_ticket)
-
-        except Exception as e:
-            await self.session.rollback()
-            raise e
 
     async def release_ticket(self, ticket_id: int) -> Optional[TicketResponse]:
         """
@@ -161,16 +139,6 @@ class TicketService:
                     Ticket.is_available == True
                 )
             )
-        )
-        tickets = query.scalars().all()
-        return [TicketResponse.model_validate(ticket) for ticket in tickets]
-
-    async def get_tickets_by_type(self, ticket_type: str) -> List[TicketResponse]:
-        """
-        Отримання квитків за типом (bus, train, plane, event)
-        """
-        query = await self.session.execute(
-            select(Ticket).where(Ticket.ticket_type == ticket_type)
         )
         tickets = query.scalars().all()
         return [TicketResponse.model_validate(ticket) for ticket in tickets]

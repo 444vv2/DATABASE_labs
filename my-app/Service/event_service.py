@@ -2,11 +2,12 @@ from typing import Optional, List
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from DAO.event_dao import EventDAO
 from DAO.general_dao import GeneralDAO
-from db.models import Event
-from schemas.event import EventCreate, EventUpdate, EventResponse
+from db.models import Event, ArtistHasEvent
+from schemas.event import EventCreate, EventUpdate, EventResponse, EventWithArtistsResponse, ArtistInEvent
 
 
 class EventService:
@@ -76,3 +77,36 @@ class EventService:
         if event:
             return EventResponse.model_validate(event)
         return None
+
+    async def get_all_events_with_artists(self) -> List[EventWithArtistsResponse]:
+        """Отримання всіх подій з артистами"""
+        query = await self.session.execute(
+            select(Event)
+            .options(selectinload(Event.artists).selectinload(ArtistHasEvent.artist))
+        )
+        events = query.scalars().all()
+
+        result = []
+        for event in events:
+            artists = []
+            for artist_has_event in event.artists:
+                artist = artist_has_event.artist
+                artists.append(ArtistInEvent(
+                    artist_id=artist.artist_id,
+                    name=artist.name,
+                    surname=artist.surname,
+                    nickname=artist.nickname,
+                    genre=artist.genre,
+                    is_group=artist.is_group
+                ))
+
+            result.append(EventWithArtistsResponse(
+                event_id=event.event_id,
+                title=event.title,
+                date_time=event.date_time,
+                seat_amount=event.seat_amount,
+                location_id=event.location_id,
+                artists=artists
+            ))
+
+        return result

@@ -96,7 +96,6 @@ class UserService:
                 if existing_phone:
                     raise ValueError(f"Phone {user_data.phone} already exists")
 
-            # 4. Оновлюємо поля
             if user_data.name is not None:
                 user.name = user_data.name
             if user_data.surname is not None:
@@ -106,7 +105,6 @@ class UserService:
             if user_data.phone is not None:
                 user.phone = user_data.phone
 
-            # 5. Зберігаємо зміни
             updated_user = await self.general_dao.update(user)
             return UserResponse.model_validate(updated_user)
 
