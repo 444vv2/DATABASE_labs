@@ -71,13 +71,6 @@ class OrderService:
         orders = await self.order_dao.get_orders_by_user(user_id)
         return [OrderResponse.model_validate(order) for order in orders]
 
-    async def get_user_order_history(self, user_id: int) -> List[OrderResponse]:
-        """
-        Отримання історії замовлень користувача
-        """
-        orders = await self.order_dao.get_orders_by_user(user_id)
-        return [OrderResponse.model_validate(order) for order in orders]
-
     async def create_orders_for_user(self, user_id: int, orders_data: OrderCreate) -> Optional[OrderResponse]:
         """
         Створення замовлень для користувача
@@ -91,40 +84,6 @@ class OrderService:
         )
         created_order = await self.general_dao.create(new_order)
         return OrderResponse.model_validate(created_order)
-
-    async def get_orders_by_status(self, payment_status: str) -> List[OrderResponse]:
-        """
-        Отримання замовлень за статусом оплати
-        """
-        query = await self.session.execute(
-            select(Order).where(Order.payment_status == payment_status)
-        )
-        orders = query.scalars().all()
-        return [OrderResponse.model_validate(order) for order in orders]
-
-    async def update_payment_status(self, order_id: int, payment_status: str) -> Optional[OrderResponse]:
-        """
-        Оновлення статусу оплати замовлення
-        """
-        order = await self.general_dao.get_by_id(Order, order_id)
-        if not order:
-            return None
-
-        order.payment_status = payment_status
-        updated_order = await self.general_dao.update(order)
-        return OrderResponse.model_validate(updated_order)
-
-    async def mark_order_as_paid(self, order_id: int) -> Optional[OrderResponse]:
-        """
-        Позначення замовлення як оплаченного
-        """
-        order = await self.general_dao.get_by_id(Order, order_id)
-        if not order:
-            return None
-
-        order.payment_status = "paid"
-        updated_order = await self.general_dao.update(order)
-        return OrderResponse.model_validate(updated_order)
 
     async def update_delivery_type(self, order_id: int, delivery_type: str) -> Optional[OrderResponse]:
         """
@@ -169,12 +128,3 @@ class OrderService:
         order.payment_status = "canceled"
         updated_order = await self.general_dao.update(order)
         return OrderResponse.model_validate(updated_order)
-
-    async def validate_order_data(self, order_id: int, user_id: int) -> bool:
-        """
-        Валідація даних замовлення
-        """
-        order = await self.general_dao.get_by_id(Order, order_id)
-        if not order:
-            return False
-        return order.user_id == user_id

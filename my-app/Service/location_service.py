@@ -64,22 +64,3 @@ class LocationService:
         )
         locations = query.scalars().all()
         return [LocationResponse.model_validate(location) for location in locations]
-
-    async def search_locations(self, search_term: str) -> List[LocationResponse]:
-        """Пошук локацій за містом або країною"""
-        query = await self.session.execute(
-            select(Location).where(
-                or_(
-                    Location.city.ilike(f"%{search_term}%"),
-                    Location.country.ilike(f"%{search_term}%")
-                )
-            )
-        )
-        locations = query.scalars().all()
-        return [LocationResponse.model_validate(location) for location in locations]
-
-    async def validate_route_exists(self, from_id: int, to_id: int) -> bool:
-        """Перевірка чи існують обидві локації для маршруту"""
-        from_location = await self.general_dao.get_by_id(Location, from_id)
-        to_location = await self.general_dao.get_by_id(Location, to_id)
-        return from_location is not None and to_location is not None

@@ -61,11 +61,3 @@ class InsuranceService:
     async def delete_insurance_by_id(self, insurance_id: int) -> bool:
         """Видалення страхівки за ID"""
         return await self.general_dao.delete_by_id(Insurance, insurance_id)
-
-    async def get_insurances_by_country(self, country: str) -> List[InsuranceResponse]:
-        """Отримання страхівок за країною"""
-        query = await self.session.execute(
-            select(Insurance).where(Insurance.country_travel.ilike(f"%{country}%"))
-        )
-        insurances = query.scalars().all()
-        return [InsuranceResponse.model_validate(insurance) for insurance in insurances]

@@ -63,14 +63,6 @@ class EventService:
         events = query.scalars().all()
         return [EventResponse.model_validate(event) for event in events]
 
-    async def get_upcoming_events(self) -> List[EventResponse]:
-        """Отримання майбутніх подій"""
-        query = await self.session.execute(
-            select(Event).where(Event.date_time > datetime.now()).order_by(Event.date_time)
-        )
-        events = query.scalars().all()
-        return [EventResponse.model_validate(event) for event in events]
-
     async def get_event_by_title(self, title: str) -> Optional[EventResponse]:
         """Пошук події за назвою"""
         event = await self.event_dao.get_event_by_title(title)

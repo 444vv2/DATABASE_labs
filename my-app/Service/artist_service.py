@@ -48,10 +48,6 @@ class ArtistService:
         updated_artist = await self.general_dao.update(artist)
         return ArtistResponse.model_validate(updated_artist)
 
-    async def delete_artist(self, artist_id: int) -> bool:
-        """Видалення артиста"""
-        return await self.general_dao.delete_by_id(Artist, artist_id)
-
     async def delete_artist_by_id(self, artist_id: int) -> bool:
         """Видалення артиста за ID"""
         return await self.general_dao.delete_by_id(Artist, artist_id)
@@ -66,22 +62,6 @@ class ArtistService:
                     Artist.nickname.ilike(f"%{search_term}%")
                 )
             )
-        )
-        artists = query.scalars().all()
-        return [ArtistResponse.model_validate(artist) for artist in artists]
-
-    async def get_artists_by_genre(self, genre: str) -> List[ArtistResponse]:
-        """Отримання артистів за жанром"""
-        query = await self.session.execute(
-            select(Artist).where(Artist.genre.ilike(f"%{genre}%"))
-        )
-        artists = query.scalars().all()
-        return [ArtistResponse.model_validate(artist) for artist in artists]
-
-    async def get_groups_only(self) -> List[ArtistResponse]:
-        """Отримання тільки груп"""
-        query = await self.session.execute(
-            select(Artist).where(Artist.is_group == True)
         )
         artists = query.scalars().all()
         return [ArtistResponse.model_validate(artist) for artist in artists]
