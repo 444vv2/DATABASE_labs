@@ -31,7 +31,8 @@ class Payment(Base):
             ondelete="NO ACTION",
             onupdate="NO ACTION"
         ),
-        nullable=False
+        nullable=False,
+        unique=True
     )
 
     __table_args__ = (

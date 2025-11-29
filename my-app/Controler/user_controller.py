@@ -90,3 +90,16 @@ async def authenticate_user(email: str, password: str, db: AsyncSession = Depend
             detail="Invalid email or password"
         )
     return {"message": "Authentication successful", "user": user}
+
+@router.post("/insert_noname", status_code=status.HTTP_201_CREATED)
+async def insert_noname(db: AsyncSession = Depends(get_db)):
+    """Вставити користувача з іменем 'NoName' за допомогою збереженої процедури"""
+    user_service = UserService(db)
+    try:
+        await user_service.insert_noname()
+        return {"message": "NoName user inserted successfully"}
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        ) from e

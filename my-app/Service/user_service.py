@@ -2,7 +2,7 @@ from typing import Optional, List
 import hashlib
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select
+from sqlalchemy import select, text
 
 from DAO.user_dao import UserDAO
 from DAO.general_dao import GeneralDAO
@@ -160,3 +160,13 @@ class UserService:
         if not user:
             return None
         return UserResponse.model_validate(user)
+
+    async def insert_noname(self) -> None:
+        try:
+            await self.session.execute(
+                text("CALL insert_Noname()")
+            )
+            await self.session.commit()
+        except Exception as e:
+            await self.session.rollback()
+            raise ValueError(f"Error inserting NoName user: {str(e)}") from e

@@ -8,6 +8,9 @@ from .payment_controller import router as payment_router
 from .delivery_controller import router as delivery_router
 from .transport_controller import router as transport_router
 from .location_controller import router as location_router
+from .comment_controller import router as comment_router
+from .artist_has_event_controller import router as artist_has_event_router
+from .procedure_controller import router as procedure_router
 
 __all__ = [
     "artist_router",
@@ -20,4 +23,7 @@ __all__ = [
     "delivery_router",
     "transport_router",
     "location_router",
+    "comment_router",
+    "artist_has_event_router",
+    "procedure_router",
 ]

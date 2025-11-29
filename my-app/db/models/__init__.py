@@ -12,6 +12,7 @@ from .delivery import Delivery
 from .insurance import Insurance
 from .location import Location
 from .payment import Payment
+from .comment import Comment
 
 __all__ = [
     "Artist",
@@ -28,4 +29,5 @@ __all__ = [
     "Insurance",
     "Location",
     "Payment",
+    "Comment",
 ]

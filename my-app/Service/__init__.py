@@ -8,6 +8,9 @@ from .payment_service import PaymentService
 from .insurance_service import InsuranceService
 from .delivery_service import DeliveryService
 from .artist_service import ArtistService
+from .comment_service import CommentService
+from .artist_has_event_service import ArtistHasEventService
+from .procedure_service import ProcedureService
 
 __all__ = [
     "UserService",
@@ -20,4 +23,7 @@ __all__ = [
     "InsuranceService", 
     "DeliveryService",
     "ArtistService",
+    "CommentService",
+    "ArtistHasEventService",
+    "ProcedureService",
 ]

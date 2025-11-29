@@ -12,6 +12,7 @@ from .delivery import DeliveryBase, DeliveryCreate, DeliveryUpdate, DeliveryResp
 from .insurance import InsuranceBase, InsuranceCreate, InsuranceUpdate, InsuranceResponse
 from .user_password import PasswordBase, PasswordCreate, PasswordUpdate, PasswordResponse
 from .artist_has_event import ArtistHasEventCreate, ArtistHasEventUpdate, ArtistHasEventResponse
+from .comment import CommentBase, CommentCreate, CommentUpdate, CommentResponse
 
 __all__ = [
     # User schemas
@@ -40,4 +41,6 @@ __all__ = [
     "PasswordBase", "PasswordCreate", "PasswordUpdate", "PasswordResponse",
     # ArtistHasEvent schemas
     "ArtistHasEventCreate", "ArtistHasEventUpdate", "ArtistHasEventResponse",
+    # Comment schemas
+    "CommentBase", "CommentCreate", "CommentUpdate", "CommentResponse",
 ]

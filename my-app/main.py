@@ -12,6 +12,9 @@ from Controler.payment_controller import router as payment_router
 from Controler.insurance_controller import router as insurance_router
 from Controler.delivery_controller import router as delivery_router
 from Controler.artist_controller import router as artist_router
+from Controler.comment_controller import router as comment_router
+from Controler.artist_has_event_controller import router as artist_has_event_router
+from Controler.procedure_controller import router as procedure_router
 
 app = FastAPI(
     title="Ticket UA API",
@@ -37,6 +40,9 @@ app.include_router(payment_router)
 app.include_router(insurance_router)
 app.include_router(delivery_router)
 app.include_router(artist_router)
+app.include_router(comment_router)
+app.include_router(artist_has_event_router)
+app.include_router(procedure_router)
 
 @app.get("/health")
 async def health_check():

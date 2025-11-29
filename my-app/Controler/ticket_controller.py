@@ -14,6 +14,19 @@ async def get_all_tickets(db: AsyncSession = Depends(get_db)):
     ticket_service = TicketService(db)
     return await ticket_service.get_all_tickets()
 
+@router.get("/avg_price_for_events", response_model=float)
+async def get_avg_price_for_events(db: AsyncSession = Depends(get_db)):
+    """Отримати середню ціну квитків для подій"""
+    ticket_service = TicketService(db)
+    try:
+        avg_price = await ticket_service.get_avg_price_for_event()
+        return avg_price
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        ) from e
+
 @router.get("/{ticket_id}", response_model=TicketResponse)
 async def get_ticket_by_id(ticket_id: int, db: AsyncSession = Depends(get_db)):
     """Отримати квиток за ID"""

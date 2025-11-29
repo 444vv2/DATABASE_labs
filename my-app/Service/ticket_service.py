@@ -1,6 +1,6 @@
 from typing import Optional, List
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+from sqlalchemy import text
 
 from DAO.ticket_dao import TicketDAO
 from DAO.general_dao import GeneralDAO
@@ -101,3 +101,18 @@ class TicketService:
         """
         tickets = await self.ticket_dao.get_event_tickets(event_id)
         return [TicketResponse.model_validate(ticket) for ticket in tickets]
+
+    async def get_avg_price_for_event(self) -> float:
+        try:
+            result = await self.session.execute(
+                text("CALL calling_func()")
+            )
+            await self.session.commit()
+
+            row = result.fetchone()
+            if row is not None:
+                return float(row[0])
+            return 0.0
+        except Exception as e:
+            await self.session.rollback()
+            raise e from e
